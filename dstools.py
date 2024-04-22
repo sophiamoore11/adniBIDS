@@ -103,7 +103,6 @@ def splitsubj(subj):
 def nearestScan(subj):
     ##Given a subject, find nearest scans of each type
         ##e.g. nearestScan(002_S_0295)
-    ##sessions must be sorted!!
 # adni
 # -- adni_anat
 #   |-- 037_S_5126
@@ -117,15 +116,13 @@ def nearestScan(subj):
 
     curr_dir = os.getcwd()  # /gpfs/data/martersteck-lab/home/sophiamoore/adni_testing/adni_all
     pth_to_subjtau = os.path.abspath(os.path.join(curr_dir, '..') + "/adni/adni_tau/" + subj)  # adni_testing/adni_all/037_S_5126 -> adni_testing/adni/adni_tau
-    sbjtau_dts = os.listdir(pth_to_subjtau)
+    sbjtau_dts = sorted(os.listdir(pth_to_subjtau)) #sorting for binary search
+
 
     pth_to_subjanat = os.path.abspath(os.path.join(curr_dir, '..') + "/adni/adni_anat/" + subj)  # adni_testing/adni_all/037_S_5126 -> adni_testing/adni/adni_anat
-    sbjanat_dts = os.listdir(pth_to_subjanat)
+    sbjanat_dts = sorted(os.listdir(pth_to_subjanat))
 
-    #check if sessions are sorted
-    '''
-    sorted(glob.glob("*"))
-    '''
+
 
     def binary_search(arr, target):
         """
@@ -164,7 +161,7 @@ def nearestScan(subj):
             anatdt = nearest_in_anat
     pth_to_subjtaudt = pth_to_subjtau + "/" + taudt
     pth_to_subjanatdt = pth_to_subjanat + "/" + anatdt
-    return print(pth_to_subjtaudt, pth_to_subjanatdt)
+    return pth_to_subjtaudt, pth_to_subjanatdt
 #return pair of paths
 #dictionary or csv
 #for...command >> output.txt
