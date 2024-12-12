@@ -3,6 +3,24 @@ import glob
 from datetime import datetime
 import shutil
 import sys
+import pandas as pd
+
+def findT1(subj_dir):
+    rankedT1 = pd.read_csv("adni_T1_names.csv")
+    T1string = rankedT1["t1proc"]
+
+    for s in T1string: #curr dir should be subject folder in adni_all
+        if len(glob.glob(subj_dir + '/*'+s))>0:
+            return T1string
+
+    return None
+
+
+    # #switch outer of double nested loop
+    # for t1 in rankedT1:
+    #     for s in os.listdir(os.getcwd()): #curr dir should be subject folder in adni_all
+    #
+    # return T1string[]
 
 def splitsubj(subj):
     # example starting structure:
@@ -77,11 +95,14 @@ def splitsubj(subj):
         os.mkdir(pth_to_subjanat)
 
     # Look for MT1__N3m
-    mt1n3m_anat = glob.glob(subj_dir + '/*MT1__GradWarp__N3m')
+    #mt1n3m_anat = glob.glob(subj_dir + '/*MT1__GradWarp__N3m')
+    #    #4/30/2024 updated search terms
+    #12/11/2024 T1 ranked search
+    t1 = findT1(subj_dir)
 
     # for each adni_anat session, mkdir ses-YYMMDD. cp niftis into that.
-    if len(mt1n3m_anat) != 0:
-        for ses in os.listdir(mt1n3m_anat[0]):  # must get date from ses folder name
+    if len(t1) != 0:
+        for ses in os.listdir(t1[0]):  # must get date from ses folder name
             if not ses[0] == ".":
                 dt_obj = datetime.strptime(ses[0:10], "%Y-%m-%d").date().strftime("%y%m%d")  # eg: 2021-06-17_16_51_03.0 -> 210617 (string obj)
                 # mkdir in adni_anat
@@ -89,7 +110,7 @@ def splitsubj(subj):
                 if not os.path.exists(pth_to_ses):
                     os.mkdir(pth_to_ses)
                 # cp nifti from I###### folder directly into new sesYYMMDD folder
-                pth_to_dt = mt1n3m_anat[0] + "/" + ses  #.../...MT1__N3/2021-06-17_16_51_03.0
+                pth_to_dt = t1[0] + "/" + ses  #.../...MT1__N3/2021-06-17_16_51_03.0
                 for niiset in os.listdir(pth_to_dt):
                     if not niiset[0] == ".":
                         for nii in os.listdir(pth_to_dt + "/" + niiset):

@@ -30,6 +30,8 @@ for currID in SID_unique:
 print(SID_MRIPET)
 
 
+idaSearch51724 = pd.read_csv("/Users/sophiamoore/Downloads/idaSearch_5_17_2024.csv")
+idaSearch51724.groupby("SubjectID")
 
 
 
